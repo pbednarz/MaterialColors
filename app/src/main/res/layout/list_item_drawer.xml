@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pl.solaris.materialcolors.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="248dp"
+    android:layout_height="68dp"
+    android:background="@drawable/navbar_selector"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <pl.solaris.materialcolors.widget.CircleTextView
+        android:id="@+id/letter"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:text="A"
+        android:textAppearance="?android:textAppearanceMedium" />
+
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:clickable="false"
+        android:duplicateParentState="true"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+</pl.solaris.materialcolors.widget.CheckableLinearLayout>

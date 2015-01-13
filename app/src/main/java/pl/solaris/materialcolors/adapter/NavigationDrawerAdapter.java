@@ -1,7 +1,6 @@
-package pl.solaris.materialcolors.recycler;
+package pl.solaris.materialcolors.adapter;
 
-import android.app.Activity;
-import android.content.res.Resources;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import pl.solaris.materialcolors.R;
 import pl.solaris.materialcolors.model.MaterialPallete;
 import pl.solaris.materialcolors.utils.ColorUtils;
@@ -19,33 +20,30 @@ import pl.solaris.materialcolors.widget.CircleTextView;
  * Created by pbednarz on 23.01.14.
  */
 
-public class NavigationDrawerRowAdapter extends ArrayAdapter<MaterialPallete> {
+public class NavigationDrawerAdapter extends ArrayAdapter<MaterialPallete> {
 
-    Activity activity;
-    Resources resources;
+    private LayoutInflater mLayoutInflater;
     private ArrayList<MaterialPallete> items = new ArrayList<MaterialPallete>();
 
-    public NavigationDrawerRowAdapter(Activity actv, ArrayList<MaterialPallete> items) {
-        super(actv, R.layout.list_item_drawer, items);
+    public NavigationDrawerAdapter(Context context, ArrayList<MaterialPallete> items) {
+        super(context, R.layout.list_item_drawer, items);
         this.items = items;
-        this.activity = actv;
-        this.resources = activity.getResources();
+        this.mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View rowView = convertView;
-        // reuse views
+        RowViewHolder holder;
         if (rowView == null) {
-            LayoutInflater inflater = activity.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.list_item_drawer, null);
-            RowViewHolder viewHolder = new RowViewHolder();
-            viewHolder.tv = (CircleTextView) rowView.findViewById(R.id.letter);
-            viewHolder.text = (TextView) rowView.findViewById(R.id.text);
-            rowView.setTag(viewHolder);
+            rowView = mLayoutInflater.inflate(R.layout.list_item_drawer, null);
+            holder = new RowViewHolder();
+            ButterKnife.inject(holder, rowView);
+            rowView.setTag(holder);
+        } else {
+            holder = (RowViewHolder) rowView.getTag();
         }
 
-        RowViewHolder holder = (RowViewHolder) rowView.getTag();
         MaterialPallete item = items.get(position);
         holder.tv.setColor(item.getColor());
         holder.tv.setText(item.getTitle().substring(0, 1));
@@ -55,7 +53,11 @@ public class NavigationDrawerRowAdapter extends ArrayAdapter<MaterialPallete> {
     }
 
     static class RowViewHolder {
+
+        @InjectView(R.id.letter)
         public CircleTextView tv;
+
+        @InjectView(R.id.text)
         public TextView text;
     }
 }

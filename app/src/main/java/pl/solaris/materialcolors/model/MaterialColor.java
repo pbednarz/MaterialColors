@@ -10,7 +10,6 @@ public class MaterialColor implements Serializable {
     String hex;
     int color;
     int colorResource;
-    boolean isOverflowTextVisible = false;
 
     public String getName() {
         return name;
@@ -42,13 +41,5 @@ public class MaterialColor implements Serializable {
 
     public void setColorResource(int colorResource) {
         this.colorResource = colorResource;
-    }
-
-    public boolean isOverflowTextVisible() {
-        return isOverflowTextVisible;
-    }
-
-    public void setOverflowTextVisible(boolean isOverflowTextVisible) {
-        this.isOverflowTextVisible = isOverflowTextVisible;
     }
 }

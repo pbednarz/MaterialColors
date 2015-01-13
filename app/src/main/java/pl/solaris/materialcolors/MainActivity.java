@@ -1,14 +1,14 @@
 package pl.solaris.materialcolors;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,30 +17,47 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import pl.solaris.materialcolors.adapter.ColorListAdapter;
+import pl.solaris.materialcolors.adapter.NavigationDrawerAdapter;
 import pl.solaris.materialcolors.model.MaterialPallete;
-import pl.solaris.materialcolors.recycler.NavigationDrawerRowAdapter;
-import pl.solaris.materialcolors.recycler.RecycleAdapter;
 import pl.solaris.materialcolors.utils.Utils;
+import pl.solaris.materialcolors.widget.MaterialDialog;
 
 public class MainActivity extends ActionBarActivity {
 
+    private final String CURRENT_POSITION = "position";
+
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @InjectView(R.id.toolbar_divider)
+    View toolbarDivider;
+
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @InjectView(R.id.menu_drawer)
+    ListView mDrawerList;
+
+    @InjectView(R.id.color_list)
+    ListView mColorsRecycler;
+
     private ArrayList<MaterialPallete> navigationItems;
-    private Toolbar toolbar;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private RecyclerView mColorsRecycler;
-    private RecycleAdapter mColorsAdapter;
+    private ColorListAdapter mColorsAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
-    private int mCurrentSelectedPosition = 0;
+    private int mCurrentSelectedPosition = -1;
+    private MaterialPallete selectedPallete;
+    private int prevColorPrimary = 0;
+    private int prevColorPrimaryDark = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        ButterKnife.inject(this);
         setSupportActionBar(toolbar);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -51,7 +68,9 @@ public class MainActivity extends ActionBarActivity {
                 R.string.navigation_drawer_close
         ) {
             public void onDrawerClosed(View view) {
-                toolbar.setTitle(R.string.app_name);
+                if (selectedPallete != null) {
+                    toolbar.setTitle(selectedPallete.getTitle());
+                }
                 invalidateOptionsMenu();
             }
 
@@ -64,46 +83,71 @@ public class MainActivity extends ActionBarActivity {
         initMenuDrawer();
         initColors();
         if (savedInstanceState == null) {
-            mCurrentSelectedPosition = 0;
             selectItem(0);
+        } else {
+            selectItem(savedInstanceState.getInt(CURRENT_POSITION, 0));
         }
+
     }
 
     private void initMenuDrawer() {
         navigationItems = Utils.getColorsModels(this);
-        mDrawerList = (ListView) findViewById(R.id.menu_drawer);
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-        mDrawerList.setAdapter(new NavigationDrawerRowAdapter(this, navigationItems));
+        mDrawerList.setAdapter(new NavigationDrawerAdapter(this, navigationItems));
         mDrawerList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        mDrawerList.setItemChecked(mCurrentSelectedPosition, true);
-    }
-
-    private void selectItem(int position) {
-        mCurrentSelectedPosition = position;
-        MaterialPallete selectedPallete = navigationItems.get(position);
-        if (mDrawerList != null) {
-            mDrawerList.setItemChecked(position, true);
-//            mDrawerList.setBackgroundColor(selectedPallete.getColorDark());
-            if (mDrawerLayout != null) {
-                mDrawerLayout.closeDrawer(mDrawerList);
-            }
-            mColorsAdapter.setColors(selectedPallete.getColors());
-            mColorsAdapter.notifyDataSetChanged();
-        }
+        mDrawerList.setItemChecked(0, true);
     }
 
     private void initColors() {
-        mColorsRecycler = (RecyclerView) findViewById(R.id.color_list);
-        mColorsRecycler.setHasFixedSize(true);
-        mColorsRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mColorsRecycler.setItemAnimator(new DefaultItemAnimator());
-        mColorsAdapter = new RecycleAdapter(navigationItems.get(0).getColors());
+        mColorsAdapter = new ColorListAdapter(this, R.layout.list_item_color, navigationItems.get(0).getColors());
         mColorsRecycler.setAdapter(mColorsAdapter);
+    }
+
+    private void selectItem(int position) {
+        if (mCurrentSelectedPosition != position) {
+            if (selectedPallete != null) {
+                prevColorPrimary = selectedPallete.getColor();
+                prevColorPrimaryDark = selectedPallete.getColorDark();
+            }
+
+            mCurrentSelectedPosition = position;
+            selectedPallete = navigationItems.get(position);
+            if (mDrawerList != null && toolbar != null && toolbarDivider != null) {
+                mDrawerList.setItemChecked(position, true);
+                toolbar.setTitle(selectedPallete.getTitle());
+                mColorsAdapter.setColors(selectedPallete.getColors());
+                mColorsAdapter.resetPosition();
+                mColorsAdapter.notifyDataSetChanged();
+                if (prevColorPrimary != 0 && prevColorPrimaryDark != 0) {
+                    animBackgroundColor(prevColorPrimaryDark, selectedPallete.getColorDark(), mDrawerList);
+                    animBackgroundColor(prevColorPrimaryDark, selectedPallete.getColorDark(), toolbarDivider);
+                    animBackgroundColor(prevColorPrimary, selectedPallete.getColor(), toolbar);
+                } else {
+                    mDrawerList.setBackgroundColor(selectedPallete.getColorDark());
+                    toolbarDivider.setBackgroundColor(selectedPallete.getColorDark());
+                    toolbar.setBackgroundColor(selectedPallete.getColor());
+                }
+            }
+        }
+    }
+
+    public void animBackgroundColor(int colorFrom, int colorTo, final View targetView) {
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                targetView.setBackgroundColor((Integer) animator.getAnimatedValue());
+            }
+
+        });
+        colorAnimation.setDuration(800);
+        colorAnimation.start();
     }
 
     @Override
@@ -116,9 +160,20 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            final MaterialDialog mMaterialDialog = new MaterialDialog(this);
+            mMaterialDialog.setTitle(R.string.app_name);
+            mMaterialDialog.setMessage(Html.fromHtml(getString(R.string.app_description)));
+            mMaterialDialog.setPositiveButton("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMaterialDialog.dismiss();
+                }
+            });
+            mMaterialDialog.show();
             return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -131,5 +186,11 @@ public class MainActivity extends ActionBarActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(CURRENT_POSITION, mCurrentSelectedPosition);
+        super.onSaveInstanceState(outState);
     }
 }

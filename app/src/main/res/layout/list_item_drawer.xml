@@ -12,9 +12,7 @@
         android:layout_height="40dp"
         android:layout_margin="4dp"
         android:gravity="center"
-        android:text="A"
         android:textAppearance="?android:textAppearanceMedium" />
-
 
     <TextView
         android:id="@+id/text"
@@ -22,10 +20,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:clickable="false"
         android:duplicateParentState="true"
         android:gravity="center"
-        android:textColor="@android:color/white"
+        android:textColor="@color/primary_text_default_material_dark"
         android:textSize="20sp" />
-
 </pl.solaris.materialcolors.widget.CheckableLinearLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="toolbar_default_height">@dimen/abc_action_bar_default_height_material</dimen>
-    <dimen name="toolbar_main_height">96dp</dimen>
+    <dimen name="toolbar_main_height">@dimen/abc_action_bar_default_height_material</dimen>
 </resources>

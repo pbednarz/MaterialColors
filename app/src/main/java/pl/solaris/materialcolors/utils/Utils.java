@@ -2,6 +2,9 @@ package pl.solaris.materialcolors.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 
@@ -12,6 +15,8 @@ import pl.solaris.materialcolors.model.MaterialPallete;
  * Created by solaris on 2014-08-31.
  */
 public class Utils {
+    private static int screenWidth = 0;
+    private static int screenHeight = 0;
 
     public static ArrayList<MaterialPallete> getColorsModels(Context context) {
         ArrayList<MaterialPallete> colors = new ArrayList<MaterialPallete>();
@@ -85,5 +90,27 @@ public class Utils {
             android.content.ClipData clip = android.content.ClipData.newPlainText("Color", value);
             clipboard.setPrimaryClip(clip);
         }
+    }
+
+    public static int getScreenHeight(Context c) {
+        if (screenHeight == 0) {
+            WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            screenHeight = size.y;
+        }
+        return screenHeight;
+    }
+
+    public static int getScreenWidth(Context c) {
+        if (screenWidth == 0) {
+            WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            screenWidth = size.x;
+        }
+        return screenWidth;
     }
 }

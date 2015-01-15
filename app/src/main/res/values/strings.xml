@@ -28,9 +28,13 @@
     <string name="blue_grey">Blue Grey</string>
     <string name="action_about">About</string>
     <string name="action_copy">Copy to clipboard</string>
+    <string name="action_fill">Fill acitivty</string>
     <string name="action_share">Share</string>
     <string name="details">Details</string>
-    <string name="app_description"><![CDATA[<b>This is a development application tool to visualize the colours of Material design.
-    <br><br>See more: <br>http://www.google.com/design/spec/style/color.html#color-ui-color-palette</b>]]></string>
+    <string name="app_description">
+<![CDATA[<b>This is a development tool to visualize the colors of Material design palette.
+    <br><br>See more: <br>http://www.google.com/design/spec/style/color.html#color-ui-color-palette</b>]]>
+    </string>
+    <string name="title_activity_color_fill">ColorFillActivity</string>
 
 </resources>

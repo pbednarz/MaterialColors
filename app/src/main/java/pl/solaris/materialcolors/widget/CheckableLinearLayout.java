@@ -7,8 +7,7 @@ import android.widget.Checkable;
 import android.widget.LinearLayout;
 
 /**
- * PGS-Software
- * Created by pbednarz on 2015-01-05.
+ * Created by solaris on 2015-01-05.
  */
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
 

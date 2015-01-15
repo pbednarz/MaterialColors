@@ -3,6 +3,8 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <RelativeLayout
@@ -20,10 +22,11 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/main_toolbar"
             android:background="@android:color/transparent"
+            android:clipToPadding="false"
             android:divider="@android:color/transparent"
-            android:dividerHeight="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:dividerHeight="6dp"
+            android:listSelector="@android:color/transparent"
+            android:padding="8dp"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical"
             tools:listitem="@layout/list_item_color" />
@@ -31,7 +34,7 @@
 
     <ListView
         android:id="@+id/menu_drawer"
-        android:layout_width="230dp"
+        android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/primary_dark"
@@ -39,7 +42,6 @@
         android:clipToPadding="false"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:fastScrollEnabled="true"
         android:listSelector="@drawable/navbar_selector"
         android:scrollbarStyle="insideOverlay"
         android:scrollbarThumbVertical="@drawable/scrollthumb_gray"

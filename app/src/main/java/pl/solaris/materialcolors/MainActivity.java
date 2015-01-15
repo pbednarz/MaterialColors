@@ -3,10 +3,13 @@ package pl.solaris.materialcolors;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.internal.widget.TintImageView;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
@@ -87,7 +90,25 @@ public class MainActivity extends ActionBarActivity {
         } else {
             selectItem(savedInstanceState.getInt(CURRENT_POSITION, 0));
         }
+    }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //fixing toolbar icons after changing theme
+        //should be fixed in next support release
+        Toolbar t = (Toolbar) findViewById(R.id.toolbar);
+        for (int i = 0; i < t.getChildCount(); i++) {
+            if (t.getChildAt(i) instanceof ActionMenuView) {
+                ActionMenuView v = (ActionMenuView) t.getChildAt(i);
+                for (int j = 0; j < v.getChildCount(); j++) {
+                    if (v.getChildAt(j) instanceof TintImageView) {
+                        TintImageView v1 = (TintImageView) v.getChildAt(j);
+                        v1.setImageResource(R.drawable.abc_ic_menu_moreoverflow_mtrl_alpha);
+                    }
+                }
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     private void initMenuDrawer() {
@@ -104,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initColors() {
-        mColorsAdapter = new ColorListAdapter(this, R.layout.list_item_color, navigationItems.get(0).getColors());
+        mColorsAdapter = new ColorListAdapter(this, R.layout.list_item_color, navigationItems.get(0).getColors(), navigationItems.get(0).getColorDark());
         mColorsRecycler.setAdapter(mColorsAdapter);
     }
 
@@ -120,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
             if (mDrawerList != null && toolbar != null && toolbarDivider != null) {
                 mDrawerList.setItemChecked(position, true);
                 toolbar.setTitle(selectedPallete.getTitle());
-                mColorsAdapter.setColors(selectedPallete.getColors());
+                mColorsAdapter.setColors(selectedPallete.getColors(), selectedPallete.getColorDark());
                 mColorsAdapter.resetPosition();
                 mColorsAdapter.notifyDataSetChanged();
                 if (prevColorPrimary != 0 && prevColorPrimaryDark != 0) {
@@ -132,6 +153,11 @@ public class MainActivity extends ActionBarActivity {
                     toolbarDivider.setBackgroundColor(selectedPallete.getColorDark());
                     toolbar.setBackgroundColor(selectedPallete.getColor());
                 }
+            }
+
+            //change status bar color
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setStatusBarColor(selectedPallete.getColorDark());
             }
         }
     }

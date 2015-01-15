@@ -1,7 +1,7 @@
 package pl.solaris.materialcolors.widget;
 
 /**
- * Created by solaris on 2015-01-14.
+ * Adopted by solaris on 2015-01-14.
  */
 
 import android.app.AlertDialog;

@@ -11,8 +11,7 @@ import android.widget.TextView;
 import pl.solaris.materialcolors.R;
 
 /**
- * PGS-Software
- * Created by pbednarz on 2015-01-05.
+ * Created by solaris on 2015-01-05.
  */
 public class CircleTextView extends TextView {
     private int centerY;

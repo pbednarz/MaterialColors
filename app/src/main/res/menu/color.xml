@@ -8,4 +8,11 @@
         android:title="@string/action_copy"
         android:visible="true"
         app:showAsAction="always|withText" />
+
+    <item
+        android:id="@+id/action_fill"
+        android:orderInCategory="101"
+        android:title="@string/action_fill"
+        android:visible="true"
+        app:showAsAction="always|withText" />
 </menu>

@@ -3,4 +3,12 @@
     <declare-styleable name="CircleTextView">
         <attr name="ctv_color" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="RippleViewFrameLayout">
+        <attr name="rv_alpha" format="integer" />
+        <attr name="rv_framerate" format="integer" />
+        <attr name="rv_rippleDuration" format="integer" />
+        <attr name="rv_color" format="color" />
+        <attr name="rv_ripplePadding" format="dimension" />
+    </declare-styleable>
 </resources>

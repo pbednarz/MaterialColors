@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:orientation="vertical"
-    android:paddingLeft="32dp"
-    android:paddingRight="32dp">
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
 
     <LinearLayout
         android:id="@+id/material_background"
@@ -28,7 +28,7 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginTop="23dp"
                 android:textColor="#DE000000"
-                android:textSize="23sp" />
+                android:textSize="21sp" />
 
             <LinearLayout
                 android:id="@+id/message_content_view"
@@ -44,10 +44,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:autoLink="all"
-                    android:lineSpacingMultiplier="1.3"
+                    android:lineSpacingMultiplier="1.1"
                     android:linksClickable="true"
                     android:textColor="#8a000000"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
         </LinearLayout>

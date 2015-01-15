@@ -13,7 +13,7 @@ public class ColorUtils {
     public static final float MIN_CONTRAST_TITLE_TEXT = 3.0f;
     public static final float MIN_CONTRAST_BODY_TEXT = 4.5f;
 
-    public ColorUtils() {
+    private ColorUtils() {
     }
 
     /**
@@ -134,6 +134,13 @@ public class ColorUtils {
 
         // This should not happen!
         return -1;
+    }
+
+    public static boolean isColorWhitish(int color) {
+        final int whiteMinAlpha = ColorUtils
+                .findMinimumAlpha(Color.WHITE, color, MIN_CONTRAST_TITLE_TEXT);
+
+        return whiteMinAlpha < 0;
     }
 
     public static void RGBtoHSL(int r, int g, int b, float[] hsl) {

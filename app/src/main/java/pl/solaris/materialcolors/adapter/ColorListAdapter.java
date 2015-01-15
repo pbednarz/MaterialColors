@@ -1,5 +1,6 @@
 package pl.solaris.materialcolors.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import pl.solaris.materialcolors.R;
+import pl.solaris.materialcolors.activity.ColorFillActivity;
 import pl.solaris.materialcolors.model.MaterialColor;
 import pl.solaris.materialcolors.utils.ColorUtils;
 import pl.solaris.materialcolors.utils.Utils;
@@ -32,11 +34,15 @@ public class ColorListAdapter extends ArrayAdapter<MaterialColor> {
     private ArrayList<MaterialColor> colors;
     private int lastPosition = -1;
     private PopupMenu mPopupMenu;
+    private Activity activity;
+    private int colorDark;
 
-    public ColorListAdapter(Context context, int resource, ArrayList<MaterialColor> objects) {
-        super(context, resource, objects);
-        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        colors = objects;
+    public ColorListAdapter(Activity activity, int resource, ArrayList<MaterialColor> objects, int colorDark) {
+        super(activity, resource, objects);
+        this.activity = activity;
+        this.mLayoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.colors = objects;
+        this.colorDark = colorDark;
     }
 
     @Override
@@ -56,8 +62,9 @@ public class ColorListAdapter extends ArrayAdapter<MaterialColor> {
         holder.tvName.setText(item.getName());
         holder.tvDescription.setText(item.getHex());
         int color = item.getColor();
-        holder.tvName.setTextColor(ColorUtils.getTextColorForBackground(color, ColorUtils.MIN_CONTRAST_TITLE_TEXT));
-        holder.tvDescription.setTextColor(ColorUtils.getTextColorForBackground(color, ColorUtils.MIN_CONTRAST_TITLE_TEXT));
+        int contrastColor = ColorUtils.getTextColorForBackground(color, ColorUtils.MIN_CONTRAST_TITLE_TEXT);
+        holder.tvName.setTextColor(contrastColor);
+        holder.tvDescription.setTextColor(contrastColor);
         holder.imButtonOverflow.setTag(position);
         holder.imButtonOverflow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +76,7 @@ public class ColorListAdapter extends ArrayAdapter<MaterialColor> {
                 }
                 mPopupMenu = new PopupMenu(view.getContext(), view);
                 mPopupMenu.getMenuInflater().inflate(R.menu.color, mPopupMenu.getMenu());
-                mPopupMenu.setOnMenuItemClickListener(new ColorMenuClickListener(view.getContext(), item.getHex()));
+                mPopupMenu.setOnMenuItemClickListener(new ColorMenuClickListener(view, item, colorDark));
                 mPopupMenu.show();
             }
         });
@@ -91,8 +98,9 @@ public class ColorListAdapter extends ArrayAdapter<MaterialColor> {
         return colors.get(position).getColor();
     }
 
-    public void setColors(ArrayList<MaterialColor> colors) {
+    public void setColors(ArrayList<MaterialColor> colors, int colorDark) {
         this.colors = colors;
+        this.colorDark = colorDark;
     }
 
     public void resetPosition() {
@@ -116,20 +124,24 @@ public class ColorListAdapter extends ArrayAdapter<MaterialColor> {
 
     private class ColorMenuClickListener implements PopupMenu.OnMenuItemClickListener {
 
-        private String mHex;
-        private Context mContext;
+        private MaterialColor materialColor;
+        private int colorDark;
+        private View view;
 
-        private ColorMenuClickListener(Context mContext, String mHex) {
-            this.mContext = mContext;
-            this.mHex = mHex;
+        private ColorMenuClickListener(View view, MaterialColor color, int colorDark) {
+            this.view = view;
+            this.materialColor = color;
+            this.colorDark = colorDark;
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             if (item.getItemId() == R.id.action_copy) {
-                Utils.copyToClipboard(mContext, mHex);
-                Toast.makeText(mContext, mHex + " copied!", Toast.LENGTH_SHORT).show();
+                Utils.copyToClipboard(view.getContext(), materialColor.getHex());
+                Toast.makeText(view.getContext(), materialColor.getHex() + " copied!", Toast.LENGTH_SHORT).show();
                 return true;
+            } else if (item.getItemId() == R.id.action_fill) {
+                ColorFillActivity.startActivity(activity, view, materialColor.getColor(), colorDark, materialColor.getName());
             }
             return false;
         }

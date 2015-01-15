@@ -1,0 +1,16 @@
+<pl.solaris.materialcolors.widget.RippleViewFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/color_rl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    tools:context="pl.solaris.materialcolors.activity.ColorFillActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_default_height"
+        android:background="@android:color/transparent" />
+
+</pl.solaris.materialcolors.widget.RippleViewFrameLayout>
